@@ -21,6 +21,10 @@ abstract class CompositeSpecification<T> : Specification<T> {
     override fun orNot(other: Specification<T>) = OrNotSpecification(this, other)
 }
 
+class EmptySpecification<T>(private val default: Boolean = true): CompositeSpecification<T>() {
+    override fun isSatisfiedBy(candidate: T): Boolean = default
+}
+
 class AndSpecification<T>(
     private val left: Specification<T>,
     private val right: Specification<T>

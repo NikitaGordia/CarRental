@@ -3,7 +3,7 @@ package model
 import java.sql.ResultSet
 
 data class Car(
-    val id: Int? = null,
+    val id: Int,
     val producer: String,
     val model: String,
     val mileage: Int,

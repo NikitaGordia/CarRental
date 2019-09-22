@@ -2,29 +2,22 @@ package utils
 
 import model.Car
 import model.CarUpdate
-import specification.Specification
+import specification.EmptySpecification
 import specification.car.*
 
 class CarUpdateMatcher {
     companion object {
-        fun checkMatch(dbCarRecord: Car, carUpdate: CarUpdate): Boolean {
-            var spec: Specification<Car>? = null
-
-            fun initOrAddSpec(newSpec: CarSpecification) {
-                spec = spec?.and(newSpec) ?: newSpec
-            }
-
+        fun checkMatch(dbCarRecord: Car, carUpdate: CarUpdate): Boolean =
             with(carUpdate) {
-                producer?.let { initOrAddSpec(ProducerIs(producer)) }
-                model?.let { initOrAddSpec(ModelIs(model)) }
-                mileage?.let { initOrAddSpec(MileageIs(mileage)) }
-                numberplate?.let { initOrAddSpec(NumberplateIs(numberplate)) }
-                seats?.let { initOrAddSpec(SeatsIs(seats)) }
-                type?.let { initOrAddSpec(TypeIs(type)) }
-                color?.let { initOrAddSpec(ColorIs(color)) }
+                EmptySpecification<Car>()
+                    .and(ProducerIs(producer ?: dbCarRecord.producer))
+                    .and(ModelIs(model ?: dbCarRecord.model))
+                    .and(MileageIs(mileage ?: dbCarRecord.mileage))
+                    .and(NumberplateIs(numberplate ?: dbCarRecord.numberplate))
+                    .and(SeatsIs(seats ?: dbCarRecord.seats))
+                    .and(TypeIs(type ?: dbCarRecord.type))
+                    .and(ColorIs(color ?: dbCarRecord.color))
+                    .isSatisfiedBy(dbCarRecord)
             }
-
-            return spec?.isSatisfiedBy(dbCarRecord) ?: false
-        }
     }
 }

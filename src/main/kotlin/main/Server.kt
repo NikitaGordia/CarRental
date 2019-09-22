@@ -4,7 +4,9 @@ import com.google.gson.Gson
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
+import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveText
+import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.delete
 import io.ktor.routing.get
@@ -21,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import model.Car
 import model.CarUpdate
+import utils.guardSafe
 
 class RegularServerGenerator(val db: Db) : ServerGenerator(), CoroutineScope {
 
@@ -43,86 +46,58 @@ class RegularServerGenerator(val db: Db) : ServerGenerator(), CoroutineScope {
             build()
         }
 
-    @KtorExperimentalAPI
     private suspend fun createCar(req: PipelineContext<Unit, ApplicationCall>) {
-        withContext(coroutineContext) {
-            val bodyText = req.call.receiveText()
-            try {
-                val car = Gson().fromJson(bodyText, Car::class.java)
-                db.insertCar(car)
+        val bodyText = req.call.receiveText()
+        guardSafe {
+            val car = Gson().fromJson(bodyText, Car::class.java)
+            db.insertCar(car)
 
-                println("Create Car: $car")
-            } catch (e: Exception) {
-                println("Failed to create Car: ${e.message}")
-            }
+            println("Create Car: $car")
+            req.call.respond(HttpStatusCode.OK)
         }
     }
 
-    @KtorExperimentalAPI
     private suspend fun getAllCars(req: PipelineContext<Unit, ApplicationCall>) {
-        withContext(coroutineContext) {
-            with(req.call.request.queryParameters) {
-                try {
-                    val cars = db.getAllCars()
-                    req.call.respondText { Gson().toJson(cars) }
+        guardSafe {
+            val cars = db.getAllCars()
+            req.call.respondText { Gson().toJson(cars) }
 
-                    println("Get all Cars $cars")
-                } catch (e: Exception) {
-                    println("Failed to get all Cars: ${e.message}")
-                }
-            }
+            println("Get all Cars $cars")
         }
     }
 
     @KtorExperimentalAPI
     private suspend fun getCar(req: PipelineContext<Unit, ApplicationCall>) {
-        withContext(coroutineContext) {
-            with(req.call.request.queryParameters) {
-                try {
-                    val id = getOrFail("id").toInt()
-                    val car = db.getCar(id)
-                    req.call.respondText { Gson().toJson(car) }
+        guardSafe {
+            val id = req.call.request.queryParameters.getOrFail("id").toInt()
+            val car = db.getCar(id)
+            req.call.respondText { Gson().toJson(car) }
 
-                    println("Get Car with id $id: $car")
-                } catch (e: Exception) {
-                    println("Failed to get Car: ${e.message}")
-                }
-            }
+            println("Get Car with id $id: $car")
         }
     }
 
     @KtorExperimentalAPI
     private suspend fun deleteCar(req: PipelineContext<Unit, ApplicationCall>) {
-        withContext(coroutineContext) {
-            with(req.call.request.queryParameters) {
-                try {
-                    val id = getOrFail("id").toInt()
-                    db.deleteCar(id)
+        guardSafe {
+            val id = req.call.request.queryParameters.getOrFail("id").toInt()
+            db.deleteCar(id)
 
-                    println("Delete Car with id $id")
-                } catch (e: Exception) {
-                    println("Failed to delete Car: ${e.message}")
-                }
-            }
+            println("Delete Car with id $id")
+            req.call.respond(HttpStatusCode.OK)
         }
     }
 
     @KtorExperimentalAPI
     private suspend fun updateCar(req: PipelineContext<Unit, ApplicationCall>) {
-        withContext(coroutineContext) {
-            val bodyText = req.call.receiveText()
-            try {
-                val carUpdate = Gson().fromJson(bodyText, CarUpdate::class.java)
-                println(carUpdate)
-                db.updateCar(carUpdate)
+        guardSafe {
+            val carUpdate = Gson().fromJson(req.call.receiveText(), CarUpdate::class.java)
+            println(carUpdate)
+            db.updateCar(carUpdate)
 
-                println("Update car: $carUpdate")
-            } catch (e: Exception) {
-                println("Failed to update Car: ${e.message}")
-            }
+            println("Update car: $carUpdate")
+            req.call.respond(HttpStatusCode.OK)
         }
-
-
     }
 }
 

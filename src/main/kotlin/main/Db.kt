@@ -4,6 +4,7 @@ import model.Car
 import model.CarUpdate
 import model.toCarList
 import utils.CarUpdateMatcher
+import utils.guard
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
@@ -65,32 +66,18 @@ class Db(private val connection: Connection) {
     fun deleteCar(id: Int) = runSqlUpdate("DELETE FROM Car WHERE id = $id")
 
     fun updateCar(carUpdate: CarUpdate) = with(carUpdate) {
-        val car = try {
-            getCar(id)
-        } catch (e:Exception) {
-            null
-        }
-
-        car?.let {
-            if (CarUpdateMatcher.checkMatch(car, carUpdate)) {
-                println("TRUE")
-                return
-            }
+        guard { getCar(id) }?.takeIf {
+            !CarUpdateMatcher.checkMatch(it, carUpdate)
+        } ?: run {
+            println("TRUE")
+            return@with
         }
 
         val sqlUpdatePref = "UPDATE Car SET"
         val sqlUpdareSuff = "WHERE id = '$id'"
+        val sqlUpdateFields = formCarUpdateFields(carUpdate)
 
-        val initList = mutableListOf<String>()
-        producer?.let { initList += "producer = '$producer'" }
-        model?.let { initList += "model = '$model'" }
-        mileage?.let { initList += "mileage = '$mileage'" }
-        numberplate?.let { initList += "numberplate = '$numberplate'" }
-        seats?.let { initList += "seats = '$seats'" }
-        type?.let { initList += "type = '$type'" }
-        color?.let { initList += "color = '$color'"}
-
-        val update = sqlUpdatePref + " " + initList.joinToString(",") + " " + sqlUpdareSuff
+        val update = "$sqlUpdatePref $sqlUpdateFields $sqlUpdareSuff"
         println(update)
         runSqlUpdate(update)
     }
@@ -111,5 +98,17 @@ class Db(private val connection: Connection) {
         } catch (e: Exception) {
             println("Failed to run query \"$request\", error ${e.message}")
         }
+    }
+
+    private fun formCarUpdateFields(carUpdate: CarUpdate) = with(carUpdate) {
+        val initList = mutableListOf<String>()
+        producer?.let { initList += "producer = '$producer'" }
+        model?.let { initList += "model = '$model'" }
+        mileage?.let { initList += "mileage = '$mileage'" }
+        numberplate?.let { initList += "numberplate = '$numberplate'" }
+        seats?.let { initList += "seats = '$seats'" }
+        type?.let { initList += "type = '$type'" }
+        color?.let { initList += "color = '$color'"}
+        initList.joinToString(", ")
     }
 }

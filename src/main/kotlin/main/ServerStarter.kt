@@ -1,15 +1,12 @@
 package main
 
-import main.Db
-import main.RegularServerGenerator
+import io.ktor.util.KtorExperimentalAPI
 
-class ServerStarter {
-    companion object {
-        fun run() {
-            val db = Db.getInstance()
-            RegularServerGenerator(db)
-                .generateServer()
-                .start(wait = true)
-        }
+object ServerStarter {
+    @KtorExperimentalAPI
+    fun run() {
+        RegularServerGenerator(Db.getInstance())
+            .generateServer()
+            .start(wait = true)
     }
 }
