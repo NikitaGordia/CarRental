@@ -1,4 +1,4 @@
-package main
+package db
 
 import model.Car
 import model.CarUpdate
@@ -9,20 +9,20 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 
-class Db(private val connection: Connection) {
+class Database(private val connection: Connection) {
 
     companion object {
         private const val DB_NAME = "CarRental"
         private const val USER_NAME = "root"
         private const val USER_PASSWORD = "carrental"
 
-        private var db: Db? = null
+        private var db: Database? = null
 
-        fun getInstance(): Db {
+        fun getInstance(): Database {
             if (db == null) {
                 try {
                     Class.forName("com.mysql.cj.jdbc.Driver")
-                    db = Db(
+                    db = Database(
                         DriverManager.getConnection(
                             "jdbc:mysql://localhost:3306/$DB_NAME?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
                             USER_NAME,
@@ -59,20 +59,15 @@ class Db(private val connection: Connection) {
         )
     }
 
-    fun getAllCars(): List<Car>? = runSqlQuery("SELECT * FROM Car")?.toCarList()
+    fun getAllCars(): List<Car> = runSqlQuery("SELECT * FROM Car")?.toCarList() ?: emptyList()
 
-    fun getCar(id: Int): Car? = runSqlQuery("SELECT * FROM Car WHERE id = $id")?.toCarList()?.get(0)
+    fun getCar(id: Int): Car =
+        runSqlQuery("SELECT * FROM Car WHERE id = $id")?.toCarList()?.get(0)
+            ?: throw Exception("Car with id=$id doesn't exist")
 
     fun deleteCar(id: Int) = runSqlUpdate("DELETE FROM Car WHERE id = $id")
 
     fun updateCar(carUpdate: CarUpdate) = with(carUpdate) {
-        guard { getCar(id) }?.takeIf {
-            !CarUpdateMatcher.checkMatch(it, carUpdate)
-        } ?: run {
-            println("TRUE")
-            return@with
-        }
-
         val sqlUpdatePref = "UPDATE Car SET"
         val sqlUpdareSuff = "WHERE id = '$id'"
         val sqlUpdateFields = formCarUpdateFields(carUpdate)

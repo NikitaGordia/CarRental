@@ -2,8 +2,8 @@ package utils
 
 import model.Car
 import model.CarUpdate
-import specification.EmptySpecification
-import specification.car.*
+import utils.specification.EmptySpecification
+import utils.specification.car.*
 
 class CarUpdateMatcher {
     companion object {

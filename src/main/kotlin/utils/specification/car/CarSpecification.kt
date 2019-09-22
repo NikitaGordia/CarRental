@@ -1,8 +1,7 @@
-package specification.car
+package utils.specification.car
 
 import model.Car
-import specification.CompositeSpecification
-import specification.Specification
+import utils.specification.CompositeSpecification
 
 class ColorIs(private val color: String) : CompositeSpecification<Car>() {
     override fun isSatisfiedBy(candidate: Car) = color == candidate.color

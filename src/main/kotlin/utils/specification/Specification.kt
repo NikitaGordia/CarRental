@@ -1,4 +1,4 @@
-package specification
+package utils.specification
 
 interface Specification<T> {
     fun isSatisfiedBy(candidate: T): Boolean
