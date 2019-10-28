@@ -1,7 +1,10 @@
 package main
 
-import main.web.WebStarter
+import main.db.Database
+import main.service.CarService
+import main.web.MainWebGenerator
 
-fun main() {
-    WebStarter.run()
+object Main {
+
+    fun create() = MainWebGenerator(CarService(Database.getInstance())).generateWeb()
 }

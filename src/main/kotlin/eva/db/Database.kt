@@ -1,6 +1,7 @@
 package eva.db
 
 import base.model.Car
+import base.model.CarUpdate
 import base.model.toCarModel
 import base.model.toPricePair
 import eva.model.PricePair
@@ -51,10 +52,10 @@ class Database(private val connection: Connection) {
         )
     }
 
-    fun getAllCars(): List<PricePair> = runSqlQuery("SELECT * FROM Car")?.toPricePair() ?: emptyList()
+    fun getPriceList(): List<PricePair> = runSqlQuery("SELECT * FROM EvaCar")?.toPricePair() ?: emptyList()
 
-    fun getCar(id: Int): Car =
-        runSqlQuery("SELECT * FROM Car WHERE id = $id")?.toCarModel()?.get(0)
+    fun getDefails(id: Int): Car =
+        runSqlQuery("SELECT * FROM EvaCar WHERE id = $id")?.toCarModel()?.get(0)
             ?: throw Exception("Car with id=$id doesn't exist")
 
     private fun runSqlQuery(request: String): ResultSet? {

@@ -1,6 +1,8 @@
 package main.web
 
 import base.WebGenerator
+import base.model.Car
+import base.model.CarUpdate
 import com.google.gson.Gson
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
@@ -16,17 +18,16 @@ import io.ktor.server.engine.ApplicationEngine
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.getOrFail
 import io.ktor.util.pipeline.PipelineContext
-import base.model.Car
-import base.model.CarUpdate
-import eva.service.CarService
+import main.service.CarService
 import main.utils.guardSafe
 
-class RegularWebGenerator(val service: CarService) : WebGenerator() {
+
+class MainWebGenerator(val service: CarService) : WebGenerator() {
 
     @KtorExperimentalAPI
-    override fun generateWeb(portX: Int): ApplicationEngine =
+    override fun generateWeb(): ApplicationEngine =
         WebBuilder().run {
-            port = portX
+            port = 8080
             engine = Engine.NETTY
             module = {
                 routing {
@@ -35,6 +36,7 @@ class RegularWebGenerator(val service: CarService) : WebGenerator() {
                     delete("/car") { deleteCar(this) }
                     post("/car") { createCar(this) }
                     post("/updCar") { updateCar(this) }
+                    get("/search") { search(this) }
                 }
             }
             build()
@@ -91,6 +93,18 @@ class RegularWebGenerator(val service: CarService) : WebGenerator() {
 
             println("Update car: $carUpdate")
             req.call.respond(HttpStatusCode.OK)
+        }
+    }
+
+    private suspend fun search(req: PipelineContext<Unit, ApplicationCall>) {
+        guardSafe {
+            val minLimit = req.call.request.queryParameters.get("minLimit")?.toIntOrNull() ?: 0
+            val maxLimit = req.call.request.queryParameters.get("maxLimit")?.toIntOrNull() ?: 5100100
+
+//            val car = service.getCar(id)
+//
+//            req.call.respondText { Gson().toJson(car) }
+//            println("EVA: Details success ($id: $car)")
         }
     }
 }

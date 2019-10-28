@@ -7,7 +7,7 @@ import io.ktor.server.netty.Netty
 
 abstract class WebGenerator {
 
-    abstract fun generateWeb(portX: Int): ApplicationEngine
+    abstract fun generateWeb(): ApplicationEngine
 
     protected inner class WebBuilder {
         var port: Int = 8080

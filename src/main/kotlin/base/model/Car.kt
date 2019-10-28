@@ -22,7 +22,7 @@ fun ResultSet.toCarModel(): List<Car> {
             Car(
                 getInt("id"),
                 getString("producer"),
-                getString("main/modelmodel"),
+                getString("model"),
                 getInt("mileage"),
                 getString("numberplate"),
                 getInt("seats"),
