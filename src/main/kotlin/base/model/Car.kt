@@ -1,5 +1,6 @@
 package base.model
 
+import eva.model.PricePair
 import java.sql.ResultSet
 
 data class Car(
@@ -10,10 +11,11 @@ data class Car(
     val numberplate: String,
     val seats: Int,
     val type: String,
-    val color: String
+    val color: String,
+    val price: Int
 )
 
-fun ResultSet.toCarList(): List<Car> {
+fun ResultSet.toCarModel(): List<Car> {
     val resList = ArrayList<Car>()
     while (next()) {
         resList.add(
@@ -25,7 +27,21 @@ fun ResultSet.toCarList(): List<Car> {
                 getString("numberplate"),
                 getInt("seats"),
                 getString("type"),
-                getString("color")
+                getString("color"),
+                getInt("price")
+            )
+        )
+    }
+    return resList
+}
+
+fun ResultSet.toPricePair(): List<PricePair> {
+    val resList = ArrayList<PricePair>()
+    while (next()) {
+        resList.add(
+            PricePair(
+                getInt("id"),
+                getInt("price")
             )
         )
     }

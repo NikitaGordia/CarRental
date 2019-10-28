@@ -1,7 +1,6 @@
-package main.db
+package eva.db
 
 import base.model.Car
-import base.model.CarUpdate
 import base.model.toCarModel
 import base.model.toPricePair
 import eva.model.PricePair
@@ -39,7 +38,7 @@ class Database(private val connection: Connection) {
 
     init {
         runSqlUpdate(
-            "CREATE TABLE IF NOT EXISTS Car( " +
+            "CREATE TABLE IF NOT EXISTS EvaCar( " +
                     "id INT AUTO_INCREMENT PRIMARY KEY," +
                     "producer TEXT," +
                     "model TEXT," +
@@ -52,31 +51,11 @@ class Database(private val connection: Connection) {
         )
     }
 
-
-    fun insertCar(car: Car) = with(car) {
-        runSqlUpdate(
-            "INSERT INTO Car(producer, model, mileage, numberplate, seats, type, color, price) " +
-                    "VALUES('$producer', '$model', '$mileage', '$numberplate', '$seats', '$type', '$color', '$price')"
-        )
-    }
-
-    fun getAllCars(): List<Car> = runSqlQuery("SELECT * FROM Car")?.toCarModel() ?: emptyList()
+    fun getAllCars(): List<PricePair> = runSqlQuery("SELECT * FROM Car")?.toPricePair() ?: emptyList()
 
     fun getCar(id: Int): Car =
         runSqlQuery("SELECT * FROM Car WHERE id = $id")?.toCarModel()?.get(0)
             ?: throw Exception("Car with id=$id doesn't exist")
-
-    fun deleteCar(id: Int) = runSqlUpdate("DELETE FROM Car WHERE id = $id")
-
-    fun updateCar(carUpdate: CarUpdate) = with(carUpdate) {
-        val sqlUpdatePref = "UPDATE Car SET"
-        val sqlUpdareSuff = "WHERE id = '$id'"
-        val sqlUpdateFields = formCarUpdateFields(carUpdate)
-
-        val update = "$sqlUpdatePref $sqlUpdateFields $sqlUpdareSuff"
-        println(update)
-        runSqlUpdate(update)
-    }
 
     private fun runSqlQuery(request: String): ResultSet? {
         var rs: ResultSet? = null
@@ -94,17 +73,5 @@ class Database(private val connection: Connection) {
         } catch (e: Exception) {
             println("Failed to run query \"$request\", error ${e.message}")
         }
-    }
-
-    private fun formCarUpdateFields(carUpdate: CarUpdate) = with(carUpdate) {
-        val initList = mutableListOf<String>()
-        producer?.let { initList += "producer = '$producer'" }
-        model?.let { initList += "model = '$model'" }
-        mileage?.let { initList += "mileage = '$mileage'" }
-        numberplate?.let { initList += "numberplate = '$numberplate'" }
-        seats?.let { initList += "seats = '$seats'" }
-        type?.let { initList += "type = '$type'" }
-        color?.let { initList += "color = '$color'"}
-        initList.joinToString(", ")
     }
 }

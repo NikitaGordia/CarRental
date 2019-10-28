@@ -2,7 +2,7 @@ package main.web
 
 import io.ktor.util.KtorExperimentalAPI
 import main.db.Database
-import main.service.CarService
+import eva.service.CarService
 
 object WebStarter {
     @KtorExperimentalAPI
