@@ -1,6 +1,6 @@
 package main.utils.specification.car
 
-import main.model.Car
+import base.model.Car
 import main.utils.specification.CompositeSpecification
 
 class ColorIs(private val color: String) : CompositeSpecification<Car>() {

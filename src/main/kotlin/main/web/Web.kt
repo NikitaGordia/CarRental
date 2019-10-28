@@ -2,7 +2,6 @@ package main.web
 
 import base.WebGenerator
 import com.google.gson.Gson
-import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -14,13 +13,11 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
 import io.ktor.server.engine.ApplicationEngine
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.getOrFail
 import io.ktor.util.pipeline.PipelineContext
-import main.model.Car
-import main.model.CarUpdate
+import base.model.Car
+import base.model.CarUpdate
 import main.service.CarService
 import main.utils.guardSafe
 

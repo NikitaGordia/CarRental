@@ -1,8 +1,8 @@
 package main.db
 
-import main.model.Car
-import main.model.CarUpdate
-import main.model.toCarList
+import base.model.Car
+import base.model.CarUpdate
+import base.model.toCarList
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet

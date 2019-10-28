@@ -1,7 +1,7 @@
 package main.utils
 
-import main.model.Car
-import main.model.CarUpdate
+import base.model.Car
+import base.model.CarUpdate
 import main.utils.specification.EmptySpecification
 import main.utils.specification.car.*
 import utils.specification.car.*

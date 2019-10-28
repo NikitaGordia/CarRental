@@ -1,4 +1,4 @@
-package main.model
+package base.model
 
 import java.sql.ResultSet
 

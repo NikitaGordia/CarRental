@@ -1,8 +1,8 @@
 package main.service
 
 import main.db.Database
-import main.model.Car
-import main.model.CarUpdate
+import base.model.Car
+import base.model.CarUpdate
 import main.utils.CarUpdateMatcher
 import main.utils.guard
 
