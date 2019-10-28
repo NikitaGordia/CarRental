@@ -18,7 +18,7 @@ import io.ktor.util.getOrFail
 import io.ktor.util.pipeline.PipelineContext
 import base.model.Car
 import base.model.CarUpdate
-import eva.service.CarService
+import main.service.CarService
 import main.utils.guardSafe
 
 class RegularWebGenerator(val service: CarService) : WebGenerator() {
