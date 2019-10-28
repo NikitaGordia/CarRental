@@ -1,5 +1,6 @@
-package web
+package main.web
 
+import base.WebGenerator
 import com.google.gson.Gson
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
@@ -18,17 +19,17 @@ import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.getOrFail
 import io.ktor.util.pipeline.PipelineContext
-import model.Car
-import model.CarUpdate
-import service.CarService
-import utils.guardSafe
+import main.model.Car
+import main.model.CarUpdate
+import main.service.CarService
+import main.utils.guardSafe
 
 class RegularWebGenerator(val service: CarService) : WebGenerator() {
 
     @KtorExperimentalAPI
-    override fun generateWeb(): ApplicationEngine =
+    override fun generateWeb(portX: Int): ApplicationEngine =
         WebBuilder().run {
-            port = 8080
+            port = portX
             engine = Engine.NETTY
             module = {
                 routing {
@@ -94,26 +95,5 @@ class RegularWebGenerator(val service: CarService) : WebGenerator() {
             println("Update car: $carUpdate")
             req.call.respond(HttpStatusCode.OK)
         }
-    }
-}
-
-abstract class WebGenerator {
-
-    abstract fun generateWeb(): ApplicationEngine
-
-    protected inner class WebBuilder {
-        var port: Int = 8080
-        var engine: Engine = Engine.NETTY
-        var module: Application.() -> Unit = {}
-
-        fun build(): ApplicationEngine = embeddedServer(getRealEngine(), port = port, module = module)
-
-        private fun getRealEngine() = when (engine) {
-            Engine.NETTY -> Netty
-        }
-    }
-
-    enum class Engine {
-        NETTY
     }
 }

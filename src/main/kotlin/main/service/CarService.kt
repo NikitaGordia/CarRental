@@ -1,10 +1,10 @@
-package service
+package main.service
 
-import db.Database
-import model.Car
-import model.CarUpdate
-import utils.CarUpdateMatcher
-import utils.guard
+import main.db.Database
+import main.model.Car
+import main.model.CarUpdate
+import main.utils.CarUpdateMatcher
+import main.utils.guard
 
 class CarService(val db: Database) {
 

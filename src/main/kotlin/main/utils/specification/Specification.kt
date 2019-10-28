@@ -1,4 +1,4 @@
-package utils.specification
+package main.utils.specification
 
 interface Specification<T> {
     fun isSatisfiedBy(candidate: T): Boolean
@@ -10,15 +10,20 @@ interface Specification<T> {
 }
 
 abstract class CompositeSpecification<T> : Specification<T> {
-    override fun and(other: Specification<T>) = AndSpecification(this, other)
+    override fun and(other: Specification<T>) =
+        AndSpecification(this, other)
 
-    override fun or(other: Specification<T>) = OrSpecification(this, other)
+    override fun or(other: Specification<T>) =
+        OrSpecification(this, other)
 
-    override fun not(other: Specification<T>) = NotSpecification(other)
+    override fun not(other: Specification<T>) =
+        NotSpecification(other)
 
-    override fun andNot(other: Specification<T>) = AndNotSpecification(this, other)
+    override fun andNot(other: Specification<T>) =
+        AndNotSpecification(this, other)
 
-    override fun orNot(other: Specification<T>) = OrNotSpecification(this, other)
+    override fun orNot(other: Specification<T>) =
+        OrNotSpecification(this, other)
 }
 
 class EmptySpecification<T>(private val default: Boolean = true): CompositeSpecification<T>() {

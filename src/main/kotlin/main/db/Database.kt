@@ -1,10 +1,8 @@
-package db
+package main.db
 
-import model.Car
-import model.CarUpdate
-import model.toCarList
-import utils.CarUpdateMatcher
-import utils.guard
+import main.model.Car
+import main.model.CarUpdate
+import main.model.toCarList
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet

@@ -1,4 +1,4 @@
-package utils
+package main.utils
 
 fun <T> guard(task: () -> T): T? = try {
     task()

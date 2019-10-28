@@ -1,4 +1,4 @@
-package model
+package main.model
 
 import java.sql.ResultSet
 
@@ -20,7 +20,7 @@ fun ResultSet.toCarList(): List<Car> {
             Car(
                 getInt("id"),
                 getString("producer"),
-                getString("model"),
+                getString("main/modelmodel"),
                 getInt("mileage"),
                 getString("numberplate"),
                 getInt("seats"),

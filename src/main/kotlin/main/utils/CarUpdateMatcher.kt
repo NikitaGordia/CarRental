@@ -1,8 +1,9 @@
-package utils
+package main.utils
 
-import model.Car
-import model.CarUpdate
-import utils.specification.EmptySpecification
+import main.model.Car
+import main.model.CarUpdate
+import main.utils.specification.EmptySpecification
+import main.utils.specification.car.*
 import utils.specification.car.*
 
 class CarUpdateMatcher {
