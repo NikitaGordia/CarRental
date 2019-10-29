@@ -109,10 +109,8 @@ class MainWebGenerator(val service: CarService) : WebGenerator() {
             val minPrice = req.call.request.queryParameters["minLimit"]?.toInt() ?: 0
             val maxPrice = req.call.request.queryParameters["maxLimit"]?.toInt() ?: Int.MAX_VALUE
 
-            val result = mutableListOf<Car>()
-            val sources = listOf(MainSource(service), AdamSource(), EvaSource())
-            sources.forEach {
-                result.addAll(it.getCars(minPrice, maxPrice))
+            val result = listOf(MainSource(service), AdamSource(), EvaSource()).flatMap {
+                it.getCars(minPrice, maxPrice)
             }
 
             req.call.respondText { Gson().toJson(result) }
