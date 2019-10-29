@@ -12,6 +12,8 @@ class CarService(val db: Database) {
         db.insertCar(car)
     }
 
+    fun searchCar(minPrice: Int, maxPrice: Int) = db.searchCar(minPrice, maxPrice)
+
     fun getAllCars(): List<Car> = db.getAllCars()
 
     fun getCar(id: Int): Car = db.getCar(id)

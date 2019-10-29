@@ -14,9 +14,14 @@ import main.utils.guardSafe
 
 class EvaWebGenerator(val service: CarService) : WebGenerator() {
 
+    companion object {
+
+        const val EVA_URL = "http://localhost:8082"
+    }
+
     override fun generateWeb(): ApplicationEngine =
         WebBuilder().run {
-            port = 8081
+            port = 8082
             engine = Engine.NETTY
             module = {
                 routing {

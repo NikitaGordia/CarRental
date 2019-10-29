@@ -1,7 +1,7 @@
 package eva.service
 
-import base.model.Car
 import eva.db.Database
+import base.model.Car
 import eva.model.PricePair
 
 class CarService(val db: Database) {

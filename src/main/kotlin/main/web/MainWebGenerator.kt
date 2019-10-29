@@ -1,9 +1,12 @@
 package main.web
 
+import adam.web.AdamWebGenerator.Companion.ADAM_URL
 import base.WebGenerator
 import base.model.Car
 import base.model.CarUpdate
 import com.google.gson.Gson
+import eva.model.PricePair
+import eva.web.EvaWebGenerator.Companion.EVA_URL
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -20,6 +23,7 @@ import io.ktor.util.getOrFail
 import io.ktor.util.pipeline.PipelineContext
 import main.service.CarService
 import main.utils.guardSafe
+import java.net.URL
 
 
 class MainWebGenerator(val service: CarService) : WebGenerator() {
@@ -98,13 +102,21 @@ class MainWebGenerator(val service: CarService) : WebGenerator() {
 
     private suspend fun search(req: PipelineContext<Unit, ApplicationCall>) {
         guardSafe {
-            val minLimit = req.call.request.queryParameters.get("minLimit")?.toIntOrNull() ?: 0
-            val maxLimit = req.call.request.queryParameters.get("maxLimit")?.toIntOrNull() ?: 5100100
+            val minPrice = req.call.request.queryParameters["minLimit"]?.toInt() ?: 0
+            val maxPrice = req.call.request.queryParameters["maxLimit"]?.toInt() ?: Int.MAX_VALUE
 
-//            val car = service.getCar(id)
-//
-//            req.call.respondText { Gson().toJson(car) }
-//            println("EVA: Details success ($id: $car)")
+            val local = service.searchCar(minPrice, maxPrice)
+            val adam = Gson().fromJson(URL("$ADAM_URL/search?minLimit=$minPrice&maxLimit=$maxPrice").readText(), Array<Car>::class.java)
+            val eva = Gson().fromJson(URL("$EVA_URL/price-list").readText(), Array<PricePair>::class.java).filter {
+                it.price in minPrice..maxPrice
+            }.map {
+                Gson().fromJson(URL("$EVA_URL/details/${it.id}").readText(), Car::class.java)
+            }
+
+            val result = (local + adam + eva).distinct()
+
+            req.call.respondText { Gson().toJson(result) }
+            println("MAIN: Search success ($minPrice $maxPrice: $result)")
         }
     }
 }
