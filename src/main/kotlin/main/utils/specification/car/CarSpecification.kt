@@ -2,6 +2,7 @@ package main.utils.specification.car
 
 import base.model.Car
 import main.utils.specification.CompositeSpecification
+/*
 
 class ColorIs(private val color: String) : CompositeSpecification<Car>() {
     override fun isSatisfiedBy(candidate: Car) = color == candidate.color
@@ -29,4 +30,4 @@ class SeatsIs(private val seat: Int) : CompositeSpecification<Car>() {
 
 class TypeIs(private val type: String) : CompositeSpecification<Car>() {
     override fun isSatisfiedBy(candidate: Car) = type == candidate.type
-}
+}*/

@@ -7,7 +7,7 @@ import main.utils.specification.car.*
 
 class CarUpdateMatcher {
     companion object {
-        fun checkMatch(dbCarRecord: Car, carUpdate: CarUpdate): Boolean =
+        /*fun checkMatch(dbCarRecord: Car, carUpdate: CarUpdate): Boolean =
             with(carUpdate) {
                 EmptySpecification<Car>()
                     .and(ProducerIs(producer ?: dbCarRecord.producer))
@@ -18,6 +18,6 @@ class CarUpdateMatcher {
                     .and(TypeIs(type ?: dbCarRecord.type))
                     .and(ColorIs(color ?: dbCarRecord.color))
                     .isSatisfiedBy(dbCarRecord)
-            }
+            }*/
     }
 }

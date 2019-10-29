@@ -21,9 +21,13 @@ import io.ktor.server.engine.ApplicationEngine
 import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.getOrFail
 import io.ktor.util.pipeline.PipelineContext
+import main.requests.AdamSource
+import main.requests.EvaSource
+import main.requests.MainSource
 import main.service.CarService
 import main.utils.guardSafe
 import java.net.URL
+import kotlin.math.max
 
 
 class MainWebGenerator(val service: CarService) : WebGenerator() {
@@ -50,7 +54,7 @@ class MainWebGenerator(val service: CarService) : WebGenerator() {
         val bodyText = req.call.receiveText()
         guardSafe {
             val car = Gson().fromJson(bodyText, Car::class.java)
-            service.createCar(car)
+            //service.createCar(car)
 
             println("Create Car: $car")
             req.call.respond(HttpStatusCode.OK)
@@ -59,10 +63,10 @@ class MainWebGenerator(val service: CarService) : WebGenerator() {
 
     private suspend fun getAllCars(req: PipelineContext<Unit, ApplicationCall>) {
         guardSafe {
-            val cars = service.getAllCars()
-            req.call.respondText { Gson().toJson(cars) }
-
-            println("Get all Cars $cars")
+//            val cars = service.getAllCars()
+//            req.call.respondText { Gson().toJson(cars) }
+//
+//            println("Get all Cars $cars")
         }
     }
 
@@ -93,7 +97,7 @@ class MainWebGenerator(val service: CarService) : WebGenerator() {
         guardSafe {
             val carUpdate = Gson().fromJson(req.call.receiveText(), CarUpdate::class.java)
             println(carUpdate)
-            service.updateCar(carUpdate)
+            //service.updateCar(carUpdate)
 
             println("Update car: $carUpdate")
             req.call.respond(HttpStatusCode.OK)
@@ -105,15 +109,11 @@ class MainWebGenerator(val service: CarService) : WebGenerator() {
             val minPrice = req.call.request.queryParameters["minLimit"]?.toInt() ?: 0
             val maxPrice = req.call.request.queryParameters["maxLimit"]?.toInt() ?: Int.MAX_VALUE
 
-            val local = service.searchCar(minPrice, maxPrice)
-            val adam = Gson().fromJson(URL("$ADAM_URL/search?minLimit=$minPrice&maxLimit=$maxPrice").readText(), Array<Car>::class.java)
-            val eva = Gson().fromJson(URL("$EVA_URL/price-list").readText(), Array<PricePair>::class.java).filter {
-                it.price in minPrice..maxPrice
-            }.map {
-                Gson().fromJson(URL("$EVA_URL/details/${it.id}").readText(), Car::class.java)
+            val result = mutableListOf<Car>()
+            val sources = listOf(MainSource(service), AdamSource(), EvaSource())
+            sources.forEach {
+                result.addAll(it.getCars(minPrice, maxPrice))
             }
-
-            val result = (local + adam + eva).distinct()
 
             req.call.respondText { Gson().toJson(result) }
             println("MAIN: Search success ($minPrice $maxPrice: $result)")

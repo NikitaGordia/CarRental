@@ -6,12 +6,6 @@ import java.sql.ResultSet
 data class Car(
     val id: Int,
     val producer: String,
-    val model: String,
-    val mileage: Int,
-    val numberplate: String,
-    val seats: Int,
-    val type: String,
-    val color: String,
     val price: Int
 )
 
@@ -22,12 +16,6 @@ fun ResultSet.toCarModel(): List<Car> {
             Car(
                 getInt("id"),
                 getString("producer"),
-                getString("model"),
-                getInt("mileage"),
-                getString("numberplate"),
-                getInt("seats"),
-                getString("type"),
-                getString("color"),
                 getInt("price")
             )
         )

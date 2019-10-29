@@ -50,7 +50,7 @@ class Database(private val connection: Connection) {
         )
     }
 
-
+/*
     fun insertCar(car: Car) = with(car) {
         runSqlUpdate(
             "INSERT INTO Car(producer, model, mileage, numberplate, seats, type, color, price) " +
@@ -58,7 +58,7 @@ class Database(private val connection: Connection) {
         )
     }
 
-    fun getAllCars(): List<Car> = runSqlQuery("SELECT * FROM Car")?.toCarModel() ?: emptyList()
+    fun getAllCars(): List<Car> = runSqlQuery("SELECT * FROM Car")?.toCarModel() ?: emptyList()*/
 
     fun getCar(id: Int): Car =
         runSqlQuery("SELECT * FROM Car WHERE id = $id")?.toCarModel()?.get(0)
