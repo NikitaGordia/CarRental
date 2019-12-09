@@ -20,7 +20,9 @@ import io.ktor.util.pipeline.PipelineContext
 import base.model.Car
 import base.model.CarUpdate
 import eva.service.CarService
+import kotlinx.coroutines.delay
 import main.utils.guardSafe
+import kotlin.math.min
 
 class AdamWebGenerator(val service: AdamCarService) : WebGenerator() {
 
@@ -37,6 +39,7 @@ class AdamWebGenerator(val service: AdamCarService) : WebGenerator() {
             module = {
                 routing {
                     get("/search") { getCar(this) }
+                    get("/gen") { generateCars(this) }
                 }
             }
             build()
@@ -48,9 +51,18 @@ class AdamWebGenerator(val service: AdamCarService) : WebGenerator() {
             val minPrice = req.call.request.queryParameters["minLimit"]?.toInt() ?: 0
             val maxPrice = req.call.request.queryParameters["maxLimit"]?.toInt() ?: Int.MAX_VALUE
             val cars = service.getCar(minPrice, maxPrice)
+            delay(20100)
             req.call.respondText { Gson().toJson(cars) }
 
             println("ADAM : Get Cars withing price limit [$minPrice, $maxPrice]")
+        }
+    }
+
+    private suspend fun generateCars(req: PipelineContext<Unit, ApplicationCall>) {
+        guardSafe {
+            val count = req.call.request.queryParameters["count"]?.toInt() ?: 0
+            service.generateCars(count)
+            req.call.respondText { "OK" }
         }
     }
 }

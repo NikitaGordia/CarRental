@@ -52,7 +52,14 @@ class Database(private val connection: Connection) {
         )
     }
 
-    fun getPriceList(): List<PricePair> = runSqlQuery("SELECT * FROM EvaCar")?.toPricePair() ?: emptyList()
+    fun insertCar(car: Car, carInfo: CarUpdate) = with(carInfo) {
+        runSqlUpdate(
+            "INSERT INTO EvaCar(producer, model, mileage, numberplate, seats, type, color, price) " +
+                    "VALUES('$producer', '$model', '$mileage', '$numberplate', '$seats', '$type', '$color', '${car.price}')"
+        )
+    }
+
+    fun getPriceList(): List<PricePair> = runSqlQuery("SELECT * FROM EvaCar LIMIT 5000")?.toPricePair() ?: emptyList()
 
     fun getDefails(id: Int): Car =
         runSqlQuery("SELECT * FROM EvaCar WHERE id = $id")?.toCarModel()?.get(0)

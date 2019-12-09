@@ -26,7 +26,8 @@ class EvaWebGenerator(val service: CarService) : WebGenerator() {
             module = {
                 routing {
                     get("/price-list") { priceList(this) }
-                    get("/details/{id}") { carDetails(this) }
+                    get("/details") { carDetails(this) }
+                    get("/gen") { generateCars(this) }
                 }
             }
             build()
@@ -48,6 +49,14 @@ class EvaWebGenerator(val service: CarService) : WebGenerator() {
 
             req.call.respondText { Gson().toJson(car) }
             println("EVA: Details success ($id: $car)")
+        }
+    }
+
+    private suspend fun generateCars(req: PipelineContext<Unit, ApplicationCall>) {
+        guardSafe {
+            val count = req.call.request.queryParameters["count"]?.toInt() ?: 0
+            service.generateCars(count)
+            req.call.respondText { "OK" }
         }
     }
 }

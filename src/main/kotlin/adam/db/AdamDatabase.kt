@@ -50,8 +50,15 @@ class AdamDatabase(private val connection: Connection) {
         )
     }
 
+    fun insertCar(car: Car, carInfo: CarUpdate) = with(carInfo) {
+        runSqlUpdate(
+            "INSERT INTO adamcar(producer, model, mileage, numberplate, seats, type, color, price) " +
+                    "VALUES('$producer', '$model', '$mileage', '$numberplate', '$seats', '$type', '$color', '${car.price}')"
+        )
+    }
+
     fun getCar(minPrice:Int, maxPrice: Int): List<Car> =
-        runSqlQuery("SELECT * FROM AdamCar WHERE price >= $minPrice AND price <= $maxPrice")?.toCarModel()
+        runSqlQuery("SELECT * FROM AdamCar WHERE price >= $minPrice AND price <= $maxPrice LIMIT 5000")?.toCarModel()
             ?: throw Exception("Cars with price limits [$minPrice, $maxPrice] do not exist")
 
     private fun runSqlQuery(request: String): ResultSet? {

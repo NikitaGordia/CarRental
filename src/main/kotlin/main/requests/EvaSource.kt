@@ -8,15 +8,14 @@ import eva.model.PricePair
 import eva.web.EvaWebGenerator
 import java.net.URL
 
-class EvaSource : CarSource<EvaCar>() {
-    override fun toCars(list: List<EvaCar>) = list.map {
-        Car(it.id, it.producer, it.price)
-    }
+class EvaSource : CarSource() {
 
-    override fun getData(minLimit: Int, maxLimit: Int): List<EvaCar> =
+    override suspend fun getData(minLimit: Int, maxLimit: Int): List<Car> =
         Gson().fromJson(URL("${EvaWebGenerator.EVA_URL}/price-list").readText(), Array<PricePair>::class.java).filter {
             it.price in minLimit..maxLimit
         }.map {
             Gson().fromJson(URL("${EvaWebGenerator.EVA_URL}/details/${it.id}").readText(), EvaCar::class.java)
+        }.map {
+            Car(it.id, it.producer, it.price)
         }
 }
